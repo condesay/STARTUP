@@ -79,50 +79,14 @@ def daily_challenge():
     if st.button("Accept challenge"):
         conn = sqlite3.connect("confidence_booster.db")
         c = conn.cursor()
-        c.execute("INSERT INTO challenges (user_id, text, status, type)
-# Liste des défis possibles pour chaque point faible
-defis = {
-    "confiance en soi": ["Faites un compliment à un(e) inconnu(e)", "Parlez de vos réussites à quelqu'un", "Faites une activité que vous aimez sans vous soucier du jugement des autres"],
-    "timidité": ["Demandez de l'aide à un(e) inconnu(e)", "Parlez à un(e) inconnu(e) dans un lieu public", "Participez à une conversation de groupe"],
-    "gestion du stress": ["Faites de la méditation pendant 10 minutes", "Faites une activité relaxante (yoga, lecture, etc.)", "Respirez profondément et comptez jusqu'à 10 avant de réagir à une situation stressante"]
-}
+        c.execute("INSERT INTO challenges (user_id, text, status, type) VALUES (?, ?, 'pending', 'daily')", (st.session_state["user_id"], challenge_text))
+        conn.commit()
+        conn.close()
+        st.success("Challenge accepted!")
+        st.experimental_rerun()
 
-# Fonction pour générer un défi aléatoire en fonction des points faibles de l'utilisateur
-def generer_defi(points_faibles):
-    defi = None
-    # Choix d'un point faible aléatoire
-    point_faible = random.choice(points_faibles)
-    # Choix d'un défi aléatoire pour ce point faible
-    if point_faible in defis:
-        defi = random.choice(defis[point_faible])
-    return defi
+menu = ["Home", "Create Profile", "Answer Questions", "Challenges", "Daily Challenge"]
+choice = st.sidebar.selectbox("Select an option", menu)
 
-# Fonction pour valider un défi et ajouter des clés ou des trophées à l'utilisateur
-def valider_defi(reussi, cle, trophee):
-    if reussi:
-        # Ajout des clés ou des trophées en fonction du type de récompense du défi
-        if cle:
-            utilisateur["cles"] += cle
-        if trophee:
-            # Ajout de trophées en fonction de la difficulté du défi
-            if trophee == "facile":
-                utilisateur["trophees"] += 1
-            elif trophee == "moyen":
-                utilisateur["trophees"] += 2
-            elif trophee == "difficile":
-                utilisateur["trophees"] += 3
-
-# Fonction pour afficher un défi et récupérer la réponse de l'utilisateur
-def afficher_defi():
-    st.write(f"**Défi du jour :** {defi}")
-    reussi = st.radio("Avez-vous réussi ce défi ?", options=["Oui", "Non"])
-    # Si le défi est réussi, on ajoute des clés ou des trophées à l'utilisateur
-    if reussi == "Oui":
-        cle = random.choice([1, 2, 3, 4])
-        trophee = None
-        if cle == 4:
-            trophee = random.choice(["facile", "moyen", "difficile"])
-        valider_defi(True, cle, trophee)
-        st.write("Bravo, vous avez réussi votre défi !")
-    else:
-        st.write("Pas de chance, vous pourrez retenter votre chance demain !")
+if choice == "Home":
+    st.title
