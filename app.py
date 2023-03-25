@@ -126,10 +126,3 @@ def afficher_defi():
         st.write("Bravo, vous avez réussi votre défi !")
     else:
         st.write("Pas de chance, vous pourrez retenter votre chance demain !")
-
-# Fonction pour afficher la fenêtre de chat avec un(e) inconnu(e)
-def afficher_chat():
-    st.write("**Fenêtre de chat**")
-    st.write("Vous êtes maintenant connecté(e) avec un(e) inconnu(e).")
-    message = st.text_input("Entrez
-
