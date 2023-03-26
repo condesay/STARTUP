@@ -43,7 +43,3 @@ else:
     st.write("Défi moyen : écrivez un paragraphe sur votre plus grande peur")
     st.write("Défi difficile : contactez quelqu'un que vous n'avez pas parlé depuis longtemps")
     st.write("Défi très difficile : donnez un discours en public")
-
-# Section pour la mise en relation entre personnes
-st.header("Mise en relation avec d'autres joueurs")
-st.write("Si vous avez besoin d'aide pour relever votre défi, vous pouvez vous connecter avec d'autres joueurs dans cette section.")
