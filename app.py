@@ -32,7 +32,7 @@ elif niveau_anxiete == "Un peu":
     st.write("Défi facile : dessinez une image de vous-même")
     st.write("Défi moyen : écrivez un paragraphe sur votre plus grande peur")
     st.write("Défi difficile : contactez quelqu'un que vous n'avez pas parlé depuis longtemps")
-    st.write("Défi très difficile : donnez un discours en public")
+    st.write("Défi très difficile : donnez un discours en public") 
 elif niveau_anxiete == "Assez":
     st.write("Défi facile : dessinez une image de vous-même")
     st.write("Défi moyen : écrivez un paragraphe sur votre plus grande peur")
