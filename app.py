@@ -1,31 +1,49 @@
 import streamlit as st
-import sqlite3
-import hashlib
 
-# connexion à la base de données
-conn = sqlite3.connect('data.db')
-c = conn.cursor()
+# Titre de l'application
+st.title("Mon application de jeu")
+st.image("image.png", caption="Une image pour vous inspirer")
 
-# création des tables dans la base de données
-c.execute('''CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, email TEXT UNIQUE, password TEXT)''')
-c.execute('''CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT UNIQUE)''')
-c.execute('''CREATE TABLE IF NOT EXISTS problems (id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, problem TEXT, anxiety_level TEXT)''')
-c.execute('''CREATE TABLE IF NOT EXISTS challenges (id INTEGER PRIMARY KEY AUTOINCREMENT, problem_id INTEGER, challenge TEXT, difficulty TEXT)''')
+# Section pour la création de compte et l'identification
+st.header("Création de compte et identification")
+st.write("Pour jouer, vous devez créer un compte et vous identifier.")
+nom_utilisateur = st.text_input("Entrez votre nom d'utilisateur")
+mot_de_passe = st.text_input("Entrez votre mot de passe", type="password")
+if st.button("Créer un compte"):
+    st.write("Compte créé avec succès ! Vous pouvez maintenant vous identifier.")
+if st.button("S'identifier"):
+    st.write("Identification réussie ! Bienvenue", nom_utilisateur, "!")
 
-# ajout des données initiales dans les tables
-c.execute("INSERT OR IGNORE INTO categories (category) VALUES ('Communication')")
-c.execute("INSERT OR IGNORE INTO categories (category) VALUES ('Créativité')")
-c.execute("INSERT OR IGNORE INTO categories (category) VALUES ('Prise de décision')")
-c.execute("INSERT OR IGNORE INTO problems (category_id, problem, anxiety_level) VALUES (?, ?, ?)", (1, "Prise de parole difficile", "un peu"))
-c.execute("INSERT OR IGNORE INTO problems (category_id, problem, anxiety_level) VALUES (?, ?, ?)", (1, "Communication avec les inconnus", "assez"))
-c.execute("INSERT OR IGNORE INTO problems (category_id, problem, anxiety_level) VALUES (?, ?, ?)", (2, "Trouver des idées originales", "beaucoup"))
-c.execute("INSERT OR IGNORE INTO problems (category_id, problem, anxiety_level) VALUES (?, ?, ?)", (2, "Sortir de sa zone de confort", "assez"))
-c.execute("INSERT OR IGNORE INTO problems (category_id, problem, anxiety_level) VALUES (?, ?, ?)", (3, "Prendre une décision importante", "beaucoup"))
-c.execute("INSERT OR IGNORE INTO problems (category_id, problem, anxiety_level) VALUES (?, ?, ?)", (3, "Gérer son stress en situation de pression", "assez"))
-c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (1, "Parler en public devant un petit groupe", "Facile"))
-c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (1, "Faire une présentation PowerPoint", "Moyen"))
-c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (1, "Participer à une réunion en ligne", "Difficile"))
-c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (2, "Demander des indications à un passant", "Facile"))
-c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (2, "Demander l'heure à un étranger", "Moyen"))
-c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (2, "Demander de l'aide à un collègue", "Difficile"))
-c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (3, "Trouver 5 idées originales pour un projet", "Facile"))
+# Formulaire pour obtenir les informations de l'utilisateur
+st.header("Informations sur l'utilisateur")
+age_utilisateur = st.number_input("Entrez votre âge")
+niveau_anxiete = st.selectbox("À quel point vous sentez-vous anxieux en général ?", ["Pas du tout", "Un peu", "Assez", "Très"])
+
+# Affichage des informations de l'utilisateur
+st.write("Vous avez", age_utilisateur, "ans et vous vous sentez", niveau_anxiete, "anxieux en général.")
+
+# Définition des défis en fonction du niveau d'anxiété de l'utilisateur
+if niveau_anxiete == "Pas du tout":
+    st.write("Défi facile : dessinez une image de vous-même")
+    st.write("Défi moyen : écrivez un paragraphe sur votre plus grande peur")
+    st.write("Défi difficile : contactez quelqu'un que vous n'avez pas parlé depuis longtemps")
+    st.write("Défi très difficile : donnez un discours en public")
+elif niveau_anxiete == "Un peu":
+    st.write("Défi facile : dessinez une image de vous-même")
+    st.write("Défi moyen : écrivez un paragraphe sur votre plus grande peur")
+    st.write("Défi difficile : contactez quelqu'un que vous n'avez pas parlé depuis longtemps")
+    st.write("Défi très difficile : donnez un discours en public")
+elif niveau_anxiete == "Assez":
+    st.write("Défi facile : dessinez une image de vous-même")
+    st.write("Défi moyen : écrivez un paragraphe sur votre plus grande peur")
+    st.write("Défi difficile : contactez quelqu'un que vous n'avez pas parlé depuis longtemps")
+    st.write("Défi très difficile : donnez un discours en public")
+else:
+    st.write("Défi facile : dessinez une image de vous-même")
+    st.write("Défi moyen : écrivez un paragraphe sur votre plus grande peur")
+    st.write("Défi difficile : contactez quelqu'un que vous n'avez pas parlé depuis longtemps")
+    st.write("Défi très difficile : donnez un discours en public")
+
+# Section pour la mise en relation entre personnes
+st.header("Mise en relation avec d'autres joueurs")
+st.write("Si vous avez besoin d'aide pour relever votre défi, vous pouvez vous connecter avec d'autres joueurs dans cette section.")
