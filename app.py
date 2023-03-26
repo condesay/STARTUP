@@ -1,92 +1,31 @@
 import streamlit as st
 import sqlite3
-import random
+import hashlib
 
-def create_profile():
-    st.header("Create your profile")
-    name = st.text_input("Name")
-    avatar = st.file_uploader("Avatar")
-    if st.button("Create"):
-        conn = sqlite3.connect("confidence_booster.db")
-        c = conn.cursor()
-        c.execute("INSERT INTO users (name, avatar, trophies) VALUES (?, ?, 0)", (name, avatar.read()))
-        user_id = c.lastrowid
-        conn.commit()
-        conn.close()
-        st.session_state["user_id"] = user_id
-        st.success("Profile created successfully!")
-        st.experimental_rerun()
+# connexion à la base de données
+conn = sqlite3.connect('data.db')
+c = conn.cursor()
 
-def answer_questions():
-    st.header("Answer some questions")
-    fear = st.text_input("What's your biggest fear?")
-    weakness = st.text_input("What's your biggest weakness?")
-    strength = st.text_input("What's your biggest strength?")
-    if st.button("Save"):
-        conn = sqlite3.connect("confidence_booster.db")
-        c = conn.cursor()
-        c.execute("UPDATE users SET fear=?, weakness=?, strength=? WHERE id=?", (fear, weakness, strength, st.session_state["user_id"]))
-        conn.commit()
-        conn.close()
-        st.success("Questions saved successfully!")
-        st.experimental_rerun()
+# création des tables dans la base de données
+c.execute('''CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, email TEXT UNIQUE, password TEXT)''')
+c.execute('''CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY AUTOINCREMENT, category TEXT UNIQUE)''')
+c.execute('''CREATE TABLE IF NOT EXISTS problems (id INTEGER PRIMARY KEY AUTOINCREMENT, category_id INTEGER, problem TEXT, anxiety_level TEXT)''')
+c.execute('''CREATE TABLE IF NOT EXISTS challenges (id INTEGER PRIMARY KEY AUTOINCREMENT, problem_id INTEGER, challenge TEXT, difficulty TEXT)''')
 
-def challenges():
-    st.header("Challenges")
-    conn = sqlite3.connect("confidence_booster.db")
-    c = conn.cursor()
-    c.execute("SELECT * FROM challenges WHERE user_id=?", (st.session_state["user_id"],))
-    challenges = c.fetchall()
-    conn.close()
-    if len(challenges) == 0:
-        st.write("You have no challenges yet.")
-    else:
-        for challenge in challenges:
-            if challenge[3] == "daily":
-                challenge_text = challenge[2]
-                if challenge[4] == "pending":
-                    if st.button("Complete challenge"):
-                        conn = sqlite3.connect("confidence_booster.db")
-                        c = conn.cursor()
-                        c.execute("UPDATE challenges SET status='completed' WHERE id=?", (challenge[0],))
-                        conn.commit()
-                        conn.close()
-                        st.success("Challenge completed!")
-                        st.experimental_rerun()
-                else:
-                    st.write(f"You have already completed this challenge: {challenge_text}")
-            else:
-                st.write("Unknown challenge type")
-
-def generate_challenge():
-    challenges = [
-        "Compliment a stranger",
-        "Try a new food",
-        "Learn a new skill",
-        "Take a risk",
-        "Do something kind for someone else"
-    ]
-    return random.choice(challenges)
-
-def daily_challenge():
-    st.header("Daily Challenge")
-    if "challenge_text" not in st.session_state:
-        challenge_text = generate_challenge()
-        st.session_state["challenge_text"] = challenge_text
-    else:
-        challenge_text = st.session_state["challenge_text"]
-    st.write(challenge_text)
-    if st.button("Accept challenge"):
-        conn = sqlite3.connect("confidence_booster.db")
-        c = conn.cursor()
-        c.execute("INSERT INTO challenges (user_id, text, status, type) VALUES (?, ?, 'pending', 'daily')", (st.session_state["user_id"], challenge_text))
-        conn.commit()
-        conn.close()
-        st.success("Challenge accepted!")
-        st.experimental_rerun()
-
-menu = ["Home", "Create Profile", "Answer Questions", "Challenges", "Daily Challenge"]
-choice = st.sidebar.selectbox("Select an option", menu)
-
-if choice == "Home":
-    st.title
+# ajout des données initiales dans les tables
+c.execute("INSERT OR IGNORE INTO categories (category) VALUES ('Communication')")
+c.execute("INSERT OR IGNORE INTO categories (category) VALUES ('Créativité')")
+c.execute("INSERT OR IGNORE INTO categories (category) VALUES ('Prise de décision')")
+c.execute("INSERT OR IGNORE INTO problems (category_id, problem, anxiety_level) VALUES (?, ?, ?)", (1, "Prise de parole difficile", "un peu"))
+c.execute("INSERT OR IGNORE INTO problems (category_id, problem, anxiety_level) VALUES (?, ?, ?)", (1, "Communication avec les inconnus", "assez"))
+c.execute("INSERT OR IGNORE INTO problems (category_id, problem, anxiety_level) VALUES (?, ?, ?)", (2, "Trouver des idées originales", "beaucoup"))
+c.execute("INSERT OR IGNORE INTO problems (category_id, problem, anxiety_level) VALUES (?, ?, ?)", (2, "Sortir de sa zone de confort", "assez"))
+c.execute("INSERT OR IGNORE INTO problems (category_id, problem, anxiety_level) VALUES (?, ?, ?)", (3, "Prendre une décision importante", "beaucoup"))
+c.execute("INSERT OR IGNORE INTO problems (category_id, problem, anxiety_level) VALUES (?, ?, ?)", (3, "Gérer son stress en situation de pression", "assez"))
+c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (1, "Parler en public devant un petit groupe", "Facile"))
+c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (1, "Faire une présentation PowerPoint", "Moyen"))
+c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (1, "Participer à une réunion en ligne", "Difficile"))
+c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (2, "Demander des indications à un passant", "Facile"))
+c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (2, "Demander l'heure à un étranger", "Moyen"))
+c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (2, "Demander de l'aide à un collègue", "Difficile"))
+c.execute("INSERT OR IGNORE INTO challenges (problem_id, challenge, difficulty) VALUES (?, ?, ?)", (3, "Trouver 5 idées originales pour un projet", "Facile"))
